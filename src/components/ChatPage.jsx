@@ -520,7 +520,14 @@ export default function ChatPage() {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.12 }}
                 >
-                  <MessageBubble message={msg} />
+                  <MessageBubble
+                      role={msg.role}
+                      content={msg.content}
+                      time={msg.time}
+                      table={msg.table}
+                      chart={msg.chart}
+                    />
+
                 </motion.div>
               </React.Fragment>
             );

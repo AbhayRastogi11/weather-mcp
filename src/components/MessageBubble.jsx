@@ -3,54 +3,42 @@ import React from "react";
 import ChartPanel from "./ChartPanel";
 import TablePanel from "./TablePanel";
 
-export default function MessageBubble({ message }) {
-  const isAssistant = message.role === "assistant";
-  const bubbleStyle = {
-    background: isAssistant ? "#f1f1f8" : "#e6fff0",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    maxWidth: "100%",
-    boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
-  };
+export default function MessageBubble({ role, content, time, table, chart }) {
+  const isAssistant = role === "assistant";
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: isAssistant ? "flex-start" : "flex-end",
-      }}
-    >
-      <div style={bubbleStyle}>
-        {/* Main text (streamed content) */}
-        <div style={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}>
-          {message.content ?? message.text ?? ""}
-        </div>
+    <div className={`msg-row ${isAssistant ? "is-assistant" : "is-user"}`}>
+      {isAssistant && <div className="msg-avatar assistant">🤖</div>}
 
-        {/* Render table (if provided) */}
-        {message.table && (
-          <div style={{ marginTop: 12 }}>
-            <TablePanel
-              columns={message.table.columns}
-              rows={message.table.rows}
-            />
+      <div className={`msg-bubble ${role}`}>
+        {/* Main text (streamed content) */}
+        <p style={{ whiteSpace: "pre-wrap" }}>{content}</p>
+
+        {/* Table (optional) */}
+        {table && table.rows && table.rows.length > 0 && (
+          <div style={{ marginTop: 8 }}>
+            <TablePanel columns={table.columns} rows={table.rows} />
           </div>
         )}
 
-        {/* Render chart (if provided) */}
-        {message.chart && (
-          <div style={{ marginTop: 12 }}>
+        {/* Chart (optional) */}
+        {chart && chart.data && (
+          <div style={{ marginTop: 8 }}>
             <ChartPanel
-              data={message.chart.data}
+              data={chart.data}
               meta={{
-                xKey: message.chart.xKey,
-                yKey: message.chart.yKey,
-                chartType: message.chart.chartType,
+                xKey: chart.xKey,
+                yKey: chart.yKey,
+                chartType: chart.chartType,
               }}
             />
           </div>
         )}
+
+        <span className="msg-time">{time}</span>
       </div>
+
+      {!isAssistant && <div className="msg-avatar user">🧑</div>}
     </div>
   );
 }
